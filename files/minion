@@ -1,0 +1,8 @@
+
+# Masterless salt install, with a different file root
+
+master: localhost
+file_client: local
+file_roots:
+  base:
+    - /synced/salt
