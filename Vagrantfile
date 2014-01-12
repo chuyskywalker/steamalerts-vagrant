@@ -7,6 +7,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.hostname = "webserver"
 
+  config.ssh.private_key_path = ["./files/insecure_private_key", "~/.ssh/vagrant-web-box"]
+
   config.vm.network :private_network, ip: "192.168.56.10"
 
   config.vm.synced_folder "./synced", "/synced"
@@ -16,6 +18,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--cpus", "4"]
   end
+
+  # move your own key in
+  id_rsa_ssh_key_pub = File.read(File.join(Dir.home, ".ssh", "vagrant-web-box.pub"))
+  config.vm.provision :shell, :inline => "echo 'Copying local public key to vm...' && echo '#{id_rsa_ssh_key_pub }' > /home/vagrant/.ssh/authorized_keys"
 
   config.vm.provision :salt do |salt|
     salt.minion_config = "./files/minion"
